@@ -1,15 +1,27 @@
 'use strict';
 
+const fs = require('fs');
 const fileReader = require('./lib/reader.js');
 
-let file = `${__dirname}/data/file.txt`;
+let dir = `${__dirname}/data/`;
 
-// A simple error first callback
-let doSomething = (err,data) => {
+function readFiles(paths, callback) {
+  fs.readdir(paths, (err, filenames) => {
+    if ( err ) { throw err; }
+    
+    filenames.forEach(filename => {
+      let path = dir + filename;
+      console.log(path);
+      fileReader(path, callback);
+    });
+  });
+}
+
+var data = [];
+readFiles(dir, (err, content) => {
   if(err) { throw err; }
+  data.push(content);
   console.log(data);
-};
+});
 
-// Invoke our file reader.  Note that the "reader" module is expected to simply export a function, not an object
-// We should be able to call it directly with a file and any callback we like.
-fileReader( file, doSomething );
+
